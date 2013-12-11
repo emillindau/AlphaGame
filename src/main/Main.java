@@ -39,8 +39,8 @@ public class Main extends Application {
         aPrimaryStage.setScene(scene);
         aPrimaryStage.show();
 
-        GameModel model = new GameModel(GameModel.Difficulty.HARDEST);
-        model.start();
+        //GameModel model = new GameModel(GameModel.Difficulty.HARDEST);
+       // model.start();
 
         /*
         Parent root = FXMLLoader.load(getClass().getResource("../fxml/main.fxml"));

@@ -27,7 +27,9 @@ public class GameController implements ControlledScreen {
             public void handle(KeyEvent keyEvent) {
 
                 if(keyEvent.getEventType() == KeyEvent.KEY_PRESSED) {
-
+                    if(keyEvent.getCode().isLetterKey()) {
+                        keyEvent.getCharacter();
+                    }
                 }
                 System.out.println("Event from keyEvent: " + keyEvent);
                 keyEvent.consume();

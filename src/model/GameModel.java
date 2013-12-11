@@ -1,5 +1,8 @@
 package model;
 
+import event.ChangeListener;
+import event.ChangeObserver;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,19 +33,25 @@ public class GameModel {
     }
 
     // The 'game-loop', sort of
-    private final ScheduledExecutorService mService = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService mService;
+
+    // The eventlistener/delegator
+    private ChangeObserver mChangeObserver;
 
     // Game variables
     private Difficulty mDifficulty;
+
     private char mCurrent;
     private char mInput;
 
-    public GameModel() {
-        this(Difficulty.HARD);
+    public GameModel(ScheduledExecutorService service) {
+        this(Difficulty.HARD, service);
     }
 
-    public GameModel(Difficulty diff) {
+    public GameModel(Difficulty diff, ScheduledExecutorService service) {
         mDifficulty = diff;
+        mService = service;
+        mChangeObserver = new ChangeObserver();
     }
 
     /**
@@ -68,10 +77,35 @@ public class GameModel {
         mService.shutdown();
     }
 
+    // Take input - String for more easiness in usage, casting happens here
+    public void input(String key) {
+        if(key.length() == 1) {
+            key = key.toUpperCase();
+            char in = key.charAt(0);
+            if(in > 64 && in < 92) {
+                mInput = in;
+            } else {
+               throw new IllegalArgumentException();
+            }
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    /**
+     * The view, or whichever class who wants to listen to events
+     * from this model must bind, and also implement the ChangeListener
+     * interface
+     * @param listener
+     */
+    public void bind(ChangeListener listener) {
+        mChangeObserver.add(listener);
+    }
+
     // Generates a random char from the alphabet
     private char getRandomCharacter() {
         int min = 0;
-        int max = ALPHABET.length;
+        int max = ALPHABET.length-1;
         int randomPos;
 
         // Could possibly have used ASCII numbers 61-95
@@ -106,6 +140,7 @@ public class GameModel {
     private void setChar(char newChar) {
         mCurrent = newChar;
     }
+    public char getInputChar() { return mInput; }
 
 }
 
