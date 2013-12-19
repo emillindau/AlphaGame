@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.verification.VerificationMode;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -132,8 +133,7 @@ public class GameModelTest {
         Field reflectField = null;
         try {
             // Sleep, because it takes 1 sec before first number is generated
-            System.out.println("> Thread sleep. Waiting 2 sec...");
-            Thread.sleep(2000);
+            sleep(2000);
 
             // Peek at the field
             reflectField = sut.getClass().getDeclaredField("mCurrent");
@@ -147,15 +147,123 @@ public class GameModelTest {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
+        } finally {
+            sut.stop();
+        }
+    }
+
+    // Helper
+    private void sleep(int amount) {
+        try {
+            System.out.println("> Thread sleep. Waiting " + (amount / 1000) + " sec...");
+            Thread.sleep(amount);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }
 
     @Test
-    public void testEventDelegate() {
+    public void testEventDelegateOnce() {
         sut.bind(mMockListener);
-        Mockito.verify(mMockListener).change();
+        sut.start();
+
+
+        sleep(1000);
+
+        Mockito.verify(mMockListener, Mockito.times(1)).change(Mockito.anyChar());
+        sut.stop();
+        sut.unbind(mMockListener);
+    }
+
+    @Test
+    public void testEventDelegateTwice() {
+        sut.bind(mMockListener);
+        sut.start();
+
+        sleep(2000);
+
+        Mockito.verify(mMockListener, Mockito.times(2)).change(Mockito.anyChar());
+        sut.stop();
+        sut.unbind(mMockListener);
+
+        Mockito.verifyNoMoreInteractions(mMockListener);
+    }
+
+    /**
+     * To generate a faulty guess we need to peek at
+     * the field that has been generated
+     * @return hopefully a faulty String
+     */
+    private String getFaultyGuess() {
+        Field reflectField = null;
+        try {
+            reflectField = sut.getClass().getDeclaredField("mCurrent");
+            reflectField.setAccessible(true);
+            Object val = reflectField.get(sut);
+            char generated = (char) val;
+            char myGuess = 'A';
+
+            if(myGuess == generated) {
+                myGuess++;
+            }
+            return ""+myGuess;
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Test
+    public void testInputTowardsGeneratedFail() {
+        sut.bind(mMockListener);
+        sut.start();
+
+        for(int i = 0; i < 4; i++) {
+            sleep(1000);
+            String faultyInput = getFaultyGuess();
+            sut.input(faultyInput);
+        }
+
+        Mockito.verify(mMockListener, Mockito.atLeastOnce()).gameOver();
+
+        sut.stop();
+        sut.unbind(mMockListener);
+    }
+
+    @Test
+    public void testNoInputGameOver() {
+        sut.bind(mMockListener);
+        sut.start();
+
+        sleep(4100);
+        // Has the value changed 3 times?
+        Mockito.verify(mMockListener, Mockito.times(4)).change(Mockito.anyChar());
+        // Then it should also generate gameOver
+        Mockito.verify(mMockListener, Mockito.atLeastOnce()).gameOver();
+
+        sut.stop();
+        sut.unbind(mMockListener);
+    }
+
+    @Test
+    public void testOneGuessPerChange() {
+        sut.bind(mMockListener);
+        sut.start();
+
+        sleep(1000);
+        for(int i = 0; i < 10; i++) {
+            sut.input("k");
+        }
+
+        // Even though we guessed a couple of times
+        // gameOver should not be called since
+        // one guess per change
+        Mockito.verify(mMockListener, Mockito.times(0)).gameOver();
+
+        sut.stop();
+        sut.unbind(mMockListener);
     }
 
     @After

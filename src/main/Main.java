@@ -24,17 +24,19 @@ public class Main extends Application {
     public static String GAME = "GameController";
     public static String GAME_FXML = "../fxml/game.fxml";
 
+    private ScreensController mController;
+
     @Override
     public void start(Stage aPrimaryStage) throws Exception{
 
-        ScreensController mainContainer = new ScreensController();
-        mainContainer.loadScreen(Main.MAIN, Main.MAIN_FXML);
-        mainContainer.loadScreen(Main.GAME, Main.GAME_FXML);
+        mController = new ScreensController();
+        mController.loadScreen(Main.MAIN, Main.MAIN_FXML);
+        mController.loadScreen(Main.GAME, Main.GAME_FXML);
 
-        mainContainer.setScreen(Main.MAIN);
+        mController.setScreen(Main.MAIN);
 
         Group root = new Group();
-        root.getChildren().addAll(mainContainer);
+        root.getChildren().addAll(mController);
         Scene scene = new Scene(root, 500, 500);
         aPrimaryStage.setScene(scene);
         aPrimaryStage.show();
@@ -90,6 +92,14 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();   */
     }
+
+    @Override
+    public void stop() throws Exception{
+        super.stop();
+        mController.dispose();
+        System.out.println("STOPPING!!!");
+    }
+
 
 
     public static void main(String[] args) {

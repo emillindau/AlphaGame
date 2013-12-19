@@ -11,4 +11,10 @@ public interface ControlledScreen {
 
     // Injection of Parent screenPane
     public void setScreenParent(ScreensController screenPage);
+
+    // When the screen is diplayed
+    public void show();
+
+    // Disposing
+    public void dispose();
 }

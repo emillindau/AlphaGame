@@ -22,11 +22,22 @@ public class MainController implements ControlledScreen {
         mController = screenPage;
     }
 
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void dispose() {
+
+    }
+
     @FXML
     private void startGame(ActionEvent event) {
         System.out.println(event.getSource());
 
         // Set a new screen
         mController.setScreen(Main.GAME);
+
     }
 }

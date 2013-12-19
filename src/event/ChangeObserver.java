@@ -12,9 +12,20 @@ public class ChangeObserver {
         listeners.add(toAdd);
     }
 
-    public void change() {
+    public boolean delete(ChangeListener toDelete) {
+        return listeners.remove(toDelete);
+    }
+
+
+    public void change(char newChar) {
         for (ChangeListener listener : listeners) {
-            listener.change();
+            listener.change(newChar);
+        }
+    }
+
+    public void gameOver() {
+        for (ChangeListener listener : listeners) {
+            listener.gameOver();
         }
     }
 }

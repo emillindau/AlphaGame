@@ -25,11 +25,16 @@ import java.util.Map;
 public class ScreensController extends StackPane {
 
     private Map<String, Node> mScreens = new HashMap<>();
+    private Map<String, ControlledScreen> mControllers = new HashMap<>();
 
     public ScreensController() {}
 
     public void addScreen(String name, Node screen) {
         mScreens.put(name, screen);
+    }
+
+    public void addController(String name, ControlledScreen controller) {
+        mControllers.put(name, controller);
     }
 
     /**
@@ -45,9 +50,11 @@ public class ScreensController extends StackPane {
             ControlledScreen myScreenController = (ControlledScreen) myLoader.getController();
             myScreenController.setScreenParent(this);
             addScreen(name, loadScreen);
+            addController(name, myScreenController);
             return true;
         } catch(Exception e) {
             System.out.println("Error: " + e.getMessage());
+            System.out.print(e.getCause());
             return false;
         }
     }
@@ -87,10 +94,17 @@ public class ScreensController extends StackPane {
                         new KeyFrame(new Duration(2500), new KeyValue(opacity, 1.0)));
                 fadeIn.play();
             }
+            mControllers.get(name).show();
             return true;
         } else {
             System.out.println("Screen hasn't been loaded");
             return false;
+        }
+    }
+
+    public void dispose() {
+        for (ControlledScreen controlledScreen : mControllers.values()) {
+            controlledScreen.dispose();
         }
     }
 
