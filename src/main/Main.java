@@ -19,8 +19,11 @@ import model.GameModel;
 
 public class Main extends Application {
 
+    private static final int WINDOW_HEIGHT = 500;
+    private static final int WINDOW_WIDTH = 500;
+
     public static String MAIN = "MainController";
-    public static String MAIN_FXML = "../fxml/main.fxml";
+    public static String MAIN_FXML = "../fxml/game2.fxml";
     public static String GAME = "GameController";
     public static String GAME_FXML = "../fxml/game.fxml";
 
@@ -37,60 +40,9 @@ public class Main extends Application {
 
         Group root = new Group();
         root.getChildren().addAll(mController);
-        Scene scene = new Scene(root, 500, 500);
+        Scene scene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
         aPrimaryStage.setScene(scene);
         aPrimaryStage.show();
-
-        //GameModel model = new GameModel(GameModel.Difficulty.HARDEST);
-       // model.start();
-
-        /*
-        Parent root = FXMLLoader.load(getClass().getResource("../fxml/main.fxml"));
-
-        final Stage primaryStage = aPrimaryStage;
-        final StackPane secondRoot = new StackPane();
-        Button btn = new Button();
-        btn.setText("This is second button");
-        secondRoot.getChildren().add(btn);
-
-        root.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent keyEvent) {
-                System.out.println(keyEvent);
-            }
-        });
-
-        root.addEventHandler(InputEvent.ANY, new EventHandler<InputEvent>() {
-            @Override
-            public void handle(InputEvent inputEvent) {
-                if(inputEvent.getEventType().equals("KEY_PRESSED")) {
-                    System.out.println("true");
-                }
-            }
-        });
-
-        TextField tf = new TextField();
-
-        root.addEventHandler(ActionEvent.ACTION, new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                System.out.println("ActionEvent: " + actionEvent.getTarget());
-            }
-        });
-
-        root.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                System.out.println("Event: " + mouseEvent.getTarget());
-                // primaryStage.hide();
-                primaryStage.setScene(new Scene(secondRoot, 400, 200));
-                primaryStage.show();
-            }
-        });
-
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
-        primaryStage.show();   */
     }
 
     @Override
